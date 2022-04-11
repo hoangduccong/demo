@@ -42,7 +42,7 @@ const App = () => {
     };
     const url = 'http://localhost:5000/check_info';
     fetch(url, {
-      method: 'PUT',
+      method: 'POST',
       body: JSON.stringify(body),
       headers: {
         'content-type': 'application/json'
