@@ -2,17 +2,16 @@ import React, { useEffect, useRef } from 'react';
 import { Grid, IconButton, Tooltip } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { CloudUpload } from '@material-ui/icons';
-import { ActionType, updateImage } from '../redux/action';
-import { CustomReducerState } from '../redux/reducer';
+import { updateImage } from '../redux/action';
+import { ReducerState } from '../redux/reducer';
 
 
 const ImageSelector = (props: any) => {
   const { onSelect } = props;
   const fileInputRef = useRef<any>(null);
   const dispatch = useDispatch();
-  const image = useSelector((state: CustomReducerState) => state.currentImage);
+  const image = useSelector((state: ReducerState) => state.currentImage);
   const onUpload = () => {
-    console.log('lalalal');
     const file: File = fileInputRef.current.files[0];
     if (file) {
       const reader = new FileReader();

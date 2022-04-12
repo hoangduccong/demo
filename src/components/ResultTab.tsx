@@ -1,11 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { CustomReducerState } from '../redux/reducer';
+import { ReducerState } from '../redux/reducer';
 import CustomTextField from './CustomTextField';
 import { useStyle } from './componentStyles';
 
 const ResultTab = (props: any) => {
-  const { data, currentImage } = useSelector((state: CustomReducerState) => state);
+  const { data, currentImage } = useSelector((state: ReducerState) => state);
   const classes = useStyle();
   return (
     <div className={classes.root}>

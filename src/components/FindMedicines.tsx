@@ -1,23 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import ImageSelector from './components/ImageSelector';
-import ResultTab from './components/ResultTab';
-import CameraFeed from './components/CameraFeed';
+import ImageSelector from './ImageSelector';
+import ResultTab from './ResultTab';
+import CameraFeed from './CameraFeed';
 import { useDispatch, useSelector } from 'react-redux';
-import { CustomReducerState } from './redux/reducer';
 import { Backdrop, Button, CircularProgress, IconButton, TextField, Tooltip } from '@material-ui/core';
-import { Preview } from './styles';
-import { CameraAltRounded, CloudUpload, FlipOutlined, SearchRounded } from '@material-ui/icons';
-import { useStyles } from './useStyles';
-import { ActionType, updateData, updateImage, updateKeyword } from './redux/action';
+import { Preview } from '../styles';
+import { CameraAltRounded, FlipOutlined, SearchRounded } from '@material-ui/icons';
+import { useStyles } from '../useStyles';
+import { updateData, updateImage, updateKeyword } from '../redux/action';
+import { flipCaptureImageUtil, flipUploadImageUtil } from './utils/Util';
+import { ReducerState } from '../redux/reducer';
 
-const App = () => {
+const FindMedicines = () => {
   const dispatch = useDispatch();
   const [ hasResult, setHasResult ] = useState(false);
   const [ currentType, setCurrentType ] = useState('keyword');
   const [ isOpenCam, setIsOpenCam ] = useState(false);
   const [ cardImage, setCardImageData ] = useState<Blob | null>(null);
   const [ loading, setLoading ] = useState(false);
-  const state = useSelector((state: CustomReducerState) => state);
+  const state = useSelector((state: ReducerState) => state);
   useEffect(() => {
     if (cardImage) {
       const reader = new FileReader();
@@ -58,45 +59,10 @@ const App = () => {
     });
   };
   const flipCapturedImage = () => {
-    console.log('flip captured');
-    // @ts-ignore
-    const img: HTMLImageElement = document.getElementById('image-base64');
-    const canvas = document.createElement('canvas');
-    const container = state.container;
-    console.log(container);
-    canvas.width = container.width;
-    canvas.height = container.height;
-    const canvasContext = canvas.getContext('2d');
-    if (canvasContext) {
-      canvasContext.translate(container.width, container.width / container.height);
-      canvasContext.scale(-1, 1);
-      // @ts-ignore
-      canvasContext.drawImage(img, 0, 0);
-    }
-    canvas.toBlob(blob => setCardImageData(blob), 'image/jpeg', 1);
+    flipCaptureImageUtil('image-base64', state.container, setCardImageData);
   };
   const flipUploadedImage = () => {
-    // @ts-ignore
-    const img: HTMLImageElement = document.getElementById('image-base64');
-    const canvas = document.createElement('canvas');
-    if (!img || !canvas) {
-      return;
-    }
-    // @ts-ignore
-    const width = img.naturalWidth;
-    // @ts-ignore
-    const height = img.naturalHeight;
-    canvas.width = width;
-    canvas.height = height;
-    const canvasContext = canvas.getContext('2d');
-    if (canvasContext) {
-      canvasContext.translate(width, Math.round(width / height));
-      canvasContext.scale(-1, 1);
-      // @ts-ignore
-      canvasContext.drawImage(img, 0, 0);
-    }
-    dispatch(updateImage(canvas.toDataURL('image/jpeg', 1.0)));
-    
+    flipUploadImageUtil('image-base64', setCardImageData, dispatch);
   };
   return <div className={classes.root}>
     {loading && (
@@ -177,4 +143,4 @@ const App = () => {
   </div>;
 };
 
-export default App;
+export default FindMedicines;

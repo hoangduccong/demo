@@ -12,7 +12,7 @@ export const useStyles = makeStyles(() => ({
   },
   previewBlock: {
     margin: 'auto',
-    width: '50%',
+    width: '20%',
     display: 'grid'
   },
   flipButton: {

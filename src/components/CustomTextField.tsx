@@ -9,6 +9,7 @@ function CustomTextField(props: any) {
       className={classes.textField}
       variant="outlined"
       fullWidth
+      
       InputLabelProps={{ shrink: true }}
       {...props}
     />
