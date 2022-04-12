@@ -52,7 +52,7 @@ const Schedule = () => {
     const body = {
       image: state.currentImage
     };
-    const url = 'http://localhost:5000/schedule';
+    const url = 'http://localhost:5000/remind';
     fetch(url, {
       method: 'POST',
       body: JSON.stringify(body),
@@ -83,7 +83,7 @@ const Schedule = () => {
         night: state.schedule.base_time.night ? moment(String(state.schedule.base_time.night)).format(TIME_FORMAT) : null,
       }
     };
-    const url = 'http://localhost:5000/remind';
+    const url = 'http://localhost:5000/confirm';
     
     fetch(url, {
       method: 'POST',
