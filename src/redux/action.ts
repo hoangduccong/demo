@@ -6,7 +6,8 @@ export const ActionType = {
   UPDATE_DATA: 'UPDATE_DATA',
   UPDATE_SCHEDULE_TIME: 'UPDATE_SCHEDULE_TIME',
   UPDATE_NOTIFY_TIME: 'UPDATE_NOTIFY_TIME',
-  UPDATE_NOTIFY_DATE: 'UPDATE_NOTIFY_DATE'
+  UPDATE_NOTIFY_DATE: 'UPDATE_NOTIFY_DATE',
+  UPDATE_SCHEDULE_DATA: 'UPDATE_SCHEDULE_DATA'
 };
 export const updateImage = (image: any) => ({
   type: ActionType.UPDATE_IMAGE_SEARCH,
@@ -16,6 +17,10 @@ export const updateData = (data: any) => ({
   type: ActionType.UPDATE_DATA,
   data
 });
+export const updateScheduleData = (data: any) => ({
+  type: ActionType.UPDATE_SCHEDULE_DATA,
+  data
+})
 export const updateKeyword = (keyword: any) => ({
   type: ActionType.UPDATE_KEY_WORD,
   keyword

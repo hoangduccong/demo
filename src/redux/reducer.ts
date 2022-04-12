@@ -131,6 +131,12 @@ export const reducer = (state = initialState, action) => {
         ...state,
         schedule: {...state.schedule, [key]: value}
       }
+    case ActionType.UPDATE_SCHEDULE_DATA:
+      return {
+        ...state,
+        schedule: action.data,
+        currentImage: undefined
+      }
     default:
       return state;
   }

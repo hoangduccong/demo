@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReducerState } from '../redux/reducer';
-import { updateData, updateImage } from '../redux/action';
+import { updateImage, updateScheduleData } from '../redux/action';
 import { useStyles } from '../useStyles';
 import {
   Avatar,
@@ -63,13 +63,12 @@ const Schedule = () => {
     }).then((res) => {
       return res.json();
     }).then((result) => {
-      dispatch(updateData(result));
+      dispatch(updateScheduleData(result));
       setHasResult(true);
     }).catch((e) => {
       console.log(e);
       setHasResult(false);
     }).finally(() => {
-      setHasResult(true);
       setLoading(false);
     });
   };
@@ -84,7 +83,7 @@ const Schedule = () => {
         night: state.schedule.base_time.night ? moment(String(state.schedule.base_time.night)).format(TIME_FORMAT) : null,
       }
     };
-    const url = 'http://localhost:5000/create-schedule';
+    const url = 'http://localhost:5000/remind';
     
     fetch(url, {
       method: 'POST',
@@ -93,16 +92,12 @@ const Schedule = () => {
         'content-type': 'application/json'
       },
       mode: 'cors'
-    }).then((res) => {
-      return res.json();
-    }).then((result) => {
-      setHasResult(true);
+    }).then((response) => {
+      setDraftNotification(true);
+      setHasResult(false);
     }).catch((e) => {
       console.log(e);
-      setHasResult(false);
     }).finally(() => {
-      setHasResult(false);
-      setDraftNotification(true);
       setLoading(false);
     });
   };
@@ -183,7 +178,7 @@ const Schedule = () => {
           <div style={{flexGrow: 1, display: 'flex'}}>
             <Avatar style={{backgroundColor: '#0c9cd4'}}/>
             <Typography style={{paddingTop: 10, paddingLeft: 10, fontStyle: 'bold'}}>
-              AIviCare - Đã đến giờ uống thuốc </Typography>
+              AIviCare - Đã đến giờ uống thuốc </ Typography>
           </div>
           <span style={{paddingLeft: 20, paddingTop: 10}}>7:30</span>
         </div>
