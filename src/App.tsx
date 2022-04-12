@@ -3,10 +3,12 @@ import ImageSelector from './components/ImageSelector';
 import ResultTab from './components/ResultTab';
 import CameraFeed from './components/CameraFeed';
 import { useDispatch, useSelector } from 'react-redux';
-import { ActionType, CustomReducerState } from './redux/reducer';
+import { CustomReducerState } from './redux/reducer';
 import { Backdrop, Button, CircularProgress, IconButton, TextField, Tooltip } from '@material-ui/core';
 import { Preview } from './styles';
-import { FlipOutlined } from '@material-ui/icons';
+import { CameraAltRounded, CloudUpload, FlipOutlined, SearchRounded } from '@material-ui/icons';
+import { useStyles } from './useStyles';
+import { ActionType, updateData, updateImage, updateKeyword } from './redux/action';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -14,26 +16,21 @@ const App = () => {
   const [ currentType, setCurrentType ] = useState('keyword');
   const [ isOpenCam, setIsOpenCam ] = useState(false);
   const [ cardImage, setCardImageData ] = useState<Blob | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [ loading, setLoading ] = useState(false);
   const state = useSelector((state: CustomReducerState) => state);
   useEffect(() => {
     if (cardImage) {
       const reader = new FileReader();
       reader.readAsDataURL(cardImage);
       reader.onloadend = function () {
-        dispatch({
-          type: ActionType.UPDATE_IMAGE_SEARCH,
-          image: reader.result
-        })
+        dispatch(updateImage(reader.result));
         setHasResult(false);
-      }
+      };
     } else {
-      dispatch({
-        type: ActionType.UPDATE_IMAGE_SEARCH,
-        image: undefined
-      })
+      dispatch(updateImage(undefined));
     }
-  }, [cardImage]);
+  }, [ cardImage ]);
+  const classes = useStyles();
   const handleGetData = () => {
     setLoading(true);
     const body = {
@@ -49,22 +46,17 @@ const App = () => {
       },
       mode: 'cors'
     }).then((res) => {
-      dispatch({
-        type: ActionType.UPDATE_IMAGE_SEARCH,
-        image: undefined
-      })
+      // dispatch(updateImage(undefined));
       return res.json();
     }).then((result) => {
-      dispatch({
-        type: ActionType.UPDATE_DATA,
-        data: result
-      })
+      dispatch(updateData(result));
       setHasResult(true);
     }).catch((e) => {
       console.log(e);
       setHasResult(false);
     }).finally(() => {
       setLoading(false);
+      setHasResult(true);
     });
   };
   const flipCapturedImage = () => {
@@ -83,7 +75,7 @@ const App = () => {
       // @ts-ignore
       canvasContext.drawImage(img, 0, 0);
     }
-    canvas.toBlob(blob => setCardImageData(blob), "image/jpeg", 1);
+    canvas.toBlob(blob => setCardImageData(blob), 'image/jpeg', 1);
   };
   const flipUploadedImage = () => {
     // @ts-ignore
@@ -105,30 +97,22 @@ const App = () => {
       // @ts-ignore
       canvasContext.drawImage(img, 0, 0);
     }
-    dispatch({
-      type: ActionType.UPDATE_IMAGE_SEARCH,
-      image: canvas.toDataURL('image/jpeg', 1.0)
-    });
+    dispatch(updateImage(canvas.toDataURL('image/jpeg', 1.0)));
+    
   };
-  return <div style={{ display: 'inline', margin: '10px 25px' }}>
+  return <div className={classes.root}>
     {loading && (
-      <Backdrop
-        style={{zIndex: 99999}}
-        open={loading}
-      >
-        <CircularProgress color="inherit" style={{ marginRight: 4 }} />
+      <Backdrop style={{ zIndex: 99999 }} open={loading}>
+        <CircularProgress color="inherit" style={{ marginRight: 4 }}/>
       </Backdrop>)}
-    <div style={{ display: 'inline-flex',width: '100%', margin: 'auto' }}>
-      <div style={{ display: 'inline-flex' }}>
+    <div className={classes.buttonList}>
+      <div className={classes.inputFields}>
         <TextField
           label={'Keyword'}
           onChange={(e) => {
-          setHasResult(false);
-            dispatch({
-              type: ActionType.UPDATE_KEY_WORD,
-              keyword: e.target.value
-            })}
-          }
+            setHasResult(false);
+            dispatch(updateKeyword(e.target.value));
+          }}
           onFocus={() => setCurrentType('keyword')}
           value={state.currentKeyword || ''}
         />
@@ -137,22 +121,41 @@ const App = () => {
           setCurrentType('upload');
           setHasResult(false);
         }}/>
-        
-        <Button
-          style={{marginRight: 15}}
-          variant="outlined"
-          onClick={() => {
-            setIsOpenCam(true);
-            setCurrentType('camera');
-            setHasResult(false);
-          }}>
-          Open Camera
-        </Button>
+        <Tooltip title="Open Camera">
+          <IconButton
+            style={{ marginRight: 15 }}
+            onClick={() => {
+              setIsOpenCam(true);
+              setCurrentType('camera');
+              setHasResult(false);
+              dispatch(updateImage(undefined));
+            }}>
+            <CameraAltRounded/>
+          </IconButton>
+        </Tooltip>
+        {(state.currentImage && !hasResult) && (
+          <Tooltip title={'Flip image'}>
+            <IconButton
+              onClick={() => {
+                if (currentType === 'camera') {
+                  flipCapturedImage();
+                } else if (currentType === 'upload') {
+                  flipUploadedImage();
+                }
+              }}
+            >
+              <FlipOutlined/>
+            </IconButton>
+          </Tooltip>
+        )}
       </div>
       <Button
-        style={{marginRight: 15}}
-        variant="outlined"
-        onClick={handleGetData}>
+        style={{ marginRight: 15 }}
+        variant="contained"
+        onClick={handleGetData}
+        color={'primary'}
+        endIcon={<SearchRounded />}
+      >
         Search
       </Button>
     </div>
@@ -163,25 +166,11 @@ const App = () => {
       setCardImage={(data: Blob) => setCardImageData(data)}
     />)}
     <hr/>
-    {state.currentImage && (
+    {(state.currentImage && !hasResult) && (
       <>
         <h4>Preview</h4>
-        <div style={{ margin: 'auto', width: '50%', display: 'grid' }}>
+        <div className={classes.previewBlock}>
           <Preview id="image-base64" src={state.currentImage}/>
-          <Tooltip title={"Flip image"} >
-            <IconButton
-              style={{width: 50, margin: 'auto', marginTop: 10}}
-              onClick={() => {
-                if (currentType === 'camera') {
-                  flipCapturedImage();
-                } else if (currentType === 'upload') {
-                  flipUploadedImage();
-                }
-              }}
-            >
-              <FlipOutlined />
-            </IconButton>
-          </Tooltip>
         </div>
         <hr/>
       </>

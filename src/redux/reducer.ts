@@ -1,14 +1,10 @@
-export const ActionType = {
-  SET_CONTAINER: 'SET_CONTAINER',
-  UPDATE_IMAGE_SEARCH: 'UPDATE_IMAGE_SEARCH',
-  UPDATE_KEY_WORD: 'UPDATE_KEY_WORD',
-  UPDATE_DATA_REQUEST: 'UPDATE_DATA_REQUEST',
-  UPDATE_DATA: 'UPDATE_DATA'
-};
+import { ActionType } from './action';
+
 export const TypeSearch = {
   IMAGE: 'image',
   KEY_WORD: 'keyword'
 };
+
 const initialState = {
   container: {
     width: 0,
@@ -46,14 +42,6 @@ export const reducer = (state = initialState, action) => {
         currentKeyword: action.keyword,
         typeSearch: TypeSearch.KEY_WORD
       };
-    case ActionType.UPDATE_DATA_REQUEST: {
-      return {
-        ...state,
-        currentImage: null,
-        typeSearch: null,
-        currentKeyword: null
-      }
-    }
     case ActionType.UPDATE_DATA: {
       return {
         ...state,

@@ -1,28 +1,33 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Grid, IconButton, Tooltip } from '@material-ui/core';
-import { ActionType } from '../redux/reducer';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { CloudUpload } from '@material-ui/icons';
+import { ActionType, updateImage } from '../redux/action';
+import { CustomReducerState } from '../redux/reducer';
 
 
 const ImageSelector = (props: any) => {
   const { onSelect } = props;
   const fileInputRef = useRef<any>(null);
   const dispatch = useDispatch();
+  const image = useSelector((state: CustomReducerState) => state.currentImage);
   const onUpload = () => {
+    console.log('lalalal');
     const file: File = fileInputRef.current.files[0];
     if (file) {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = function () {
         onSelect();
-        dispatch({
-          type: ActionType.UPDATE_IMAGE_SEARCH,
-          image: reader.result
-        });
+        dispatch(updateImage(reader.result));
       };
     }
   }
+  useEffect(() => {
+    if (!image && fileInputRef) {
+      fileInputRef.current.value = null;
+    }
+  }, [image])
   return (
     <div>
       <Grid item >

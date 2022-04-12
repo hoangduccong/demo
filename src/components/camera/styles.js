@@ -77,5 +77,5 @@ export const Button = styled.button`
   max-width: 250px;
   margin-top: 24px;
   padding: 12px 24px;
-  background: silver;
+  border-radius: 15px;
 `;

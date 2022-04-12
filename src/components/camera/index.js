@@ -13,7 +13,7 @@ import {
   Button
 } from "./styles";
 import {useDispatch} from "react-redux";
-import {ActionType} from "../../redux/reducer";
+import {ActionType} from "../../redux/action";
 
 const CAPTURE_OPTIONS = {
   audio: false,
@@ -131,7 +131,7 @@ export function Camera({ onCapture, onClear, setCloseCam }) {
             />
           </Container>
 
-          <div style={{display: 'inline-flex'}}>
+          <div style={{display: 'inline-flex', width: '100%', flexDirection: 'row-reverse'}}>
             {isVideoPlaying && (
               <Button style={{marginRight: 20}} onClick={isCanvasEmpty ? handleCapture : handleClear}>
                 {isCanvasEmpty ? "Take a picture" : "Take another picture"}
