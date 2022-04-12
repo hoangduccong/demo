@@ -46,7 +46,6 @@ const App = () => {
       },
       mode: 'cors'
     }).then((res) => {
-      // dispatch(updateImage(undefined));
       return res.json();
     }).then((result) => {
       dispatch(updateData(result));
@@ -56,7 +55,6 @@ const App = () => {
       setHasResult(false);
     }).finally(() => {
       setLoading(false);
-      setHasResult(true);
     });
   };
   const flipCapturedImage = () => {
